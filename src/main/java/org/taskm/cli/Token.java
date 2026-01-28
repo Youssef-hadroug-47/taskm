@@ -1,16 +1,16 @@
 package org.taskm.cli;
 
-public class Token <T> {
+public class Token  {
     
     private final TokenType type;
-    private final T value ;
+    private final String value ;
     
-    public Token(TokenType type , T value){
+    public Token(TokenType type , String value){
         this.type = type;
         this.value = value;
     }
     
     public TokenType getType(){return this.type;}
-    public T getVal(){return this.value;}
+    public String getVal(){return this.value;}
 
 }
