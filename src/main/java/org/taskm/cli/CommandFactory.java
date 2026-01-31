@@ -1,20 +1,18 @@
 package org.taskm.cli;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.taskm.commands.Command;
+import org.taskm.commands.*;
 
 
 public class CommandFactory {
     
-    private final ArrayList<Token> tokens ;
+    private ParserResult parserResult;
 
-    public CommandFactory(ArrayList<Token> tokens){
-        this.tokens = tokens;
-    }
-
-    public Command resolveCommand(){
-
+    public CommandFactory(ParserResult parserResult){
+        this.parserResult = parserResult;
     }
 
 }

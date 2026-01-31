@@ -3,7 +3,6 @@ package org.taskm.cli;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.taskm.cli.CommandValidator;
 import org.taskm.commandsInfo.CommandSpecs;
 import org.taskm.commandsInfo.CommandsList;
 
@@ -15,10 +14,10 @@ public class Parser {
         this.expression = expression;
     }
     
-    public Result<ArrayList<Token>> parse(){
+    public Result<ParserResult> parse(){
         
         if (expression.isEmpty())
-            return new Result<ArrayList<Token>>(false, "No command provided :", null);
+            return new Result<ParserResult>(false, "No command provided :", null);
 
         ArrayList<Token> tokens = new ArrayList<>();
 
@@ -38,19 +37,20 @@ public class Parser {
                 }
             }
         if (commandSpecs == null) 
-            return new Result<ArrayList<Token>>(false, "Invalid command :"+expression.getFirst(), null);
+            return new Result<ParserResult>(false, "Invalid command :"+expression.getFirst(), null);
 
         tokens.add(new Token(TokenType.COMMAND , expression.getFirst())); 
-        if (commandSpecs.hasSubCommand()) tokens.add(new Token(TokenType.SUBCOMMAND , expression.get(1)));
+        int optionStartIndex = 1;
+        if (commandSpecs.hasSubCommand()) {tokens.add(new Token(TokenType.SUBCOMMAND , expression.get(1)));optionStartIndex++;}
         
         CommandValidator commandValidator = new CommandValidator(commandSpecs);
-        Result<ArrayList<Token>> result = commandValidator.validate(expression.subList(1,expression.size()));
+        Result<ArrayList<Token>> result = commandValidator.validate(expression.subList(optionStartIndex,expression.size()));
         
         if (!result.getSuccess()) 
-            return result;
+            return new Result<ParserResult>(false, result.getMessage(), null);
 
         if (result.getValue() != null ) tokens.addAll(result.getValue());
-        return new Result<ArrayList<Token>>(true, "", tokens);
+        return new Result<ParserResult>(true, "", new ParserResult(tokens, commandSpecs));
     }
 
 }

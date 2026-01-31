@@ -43,7 +43,7 @@ public class CommandValidator {
         OptionSpecs lastOption = null;
         while (i<expression.size()){
             
-            if (expression.get(i).startsWith("--")){
+            if (expression.get(i).startsWith("--") || expression.get(i).startsWith("-") ){
                 if ( isExpectedTokenArgument )
                     return new Result<ArrayList<Token>>(false, "Missing argument for :"+expression.get(i-1), null);
 

@@ -16,7 +16,7 @@ public class CommandsList {
         }
         commands.add(command);    
     }
-    public static void addCommand(List<CommandSpecs> com){
+    public static void addCommand(Set<CommandSpecs> com){
         if (commands == null){
             commands = new HashSet<>(com);
             return;

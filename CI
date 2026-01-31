@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mvn verify >/dev/null 2>/dev/null
+mkdir -p ~/.taskm
+rm -rf ~/.taskm/*
+cp -r target/jpackage/taskm/* ~/.taskm

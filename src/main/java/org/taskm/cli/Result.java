@@ -19,4 +19,9 @@ public class Result<T> {
     public void setSuccess(boolean success ){this.success = success;}
     public void setMessage(String message ){this.message = message;}
     public void setValue(T val){this.val = val;}
+
+    public void showFailure(){
+        if (!success)
+            System.out.println(message);
+    }
 }

@@ -35,6 +35,6 @@ public class CommandSpecs {
     public String getFormat(){return format;}
     public Command getCommand(){return command;}
     public Set<OptionSpecs> getRequiredOptions(){return requiredOptions;}
-    public boolean hasSubCommand(){return subCommand == null || subCommand.isEmpty() ;}
-    public boolean hasOptions(){return options == null || options.size() == 0 ;}
+    public boolean hasSubCommand(){return subCommand != null && !subCommand.isEmpty() ;}
+    public boolean hasOptions(){return options != null && options.size() != 0 ;}
 }
