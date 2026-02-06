@@ -8,16 +8,18 @@ import org.taskm.commands.Command;
 public class CommandSpecs {
     private String name ;
     private String subCommand;
+    private boolean hasArgument;
     private Set<OptionSpecs> options;
     private Set<OptionSpecs> requiredOptions;
     private String description ;
     private Command command;
     private String format;
 
-    public CommandSpecs(String name , Set<OptionSpecs> options , String subCommand,
+    public CommandSpecs(String name , Set<OptionSpecs> options , String subCommand, boolean hasArgument ,
             String description , String format ,Command command ){
         this.command = command ;
         this.subCommand = subCommand;
+        this.hasArgument = hasArgument;
         this.description = description;
         this.format = format;
         this.name = name ;
@@ -37,4 +39,5 @@ public class CommandSpecs {
     public Set<OptionSpecs> getRequiredOptions(){return requiredOptions;}
     public boolean hasSubCommand(){return subCommand != null && !subCommand.isEmpty() ;}
     public boolean hasOptions(){return options != null && options.size() != 0 ;}
+    public boolean hasArgument(){return hasArgument;}
 }

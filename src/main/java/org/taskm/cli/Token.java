@@ -1,7 +1,15 @@
 package org.taskm.cli;
 
 public class Token  {
-    
+
+     public enum TokenType{
+        COMMAND,
+        SUBCOMMAND,
+        OPTIONS,
+        OPTION_ARGUMENT,
+        COMMAND_ARGUMENT
+    }   
+
     private final TokenType type;
     private final String value ;
     

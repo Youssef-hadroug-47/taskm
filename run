@@ -1,4 +1,4 @@
 #!/bin/bash
 
 mvn clean compile 2>/dev/null >/dev/null
-
+mvn exec:java -Dexec.mainClass="org.taskm.App"

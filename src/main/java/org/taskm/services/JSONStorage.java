@@ -17,8 +17,8 @@ import org.taskm.cli.Result;
 import org.taskm.models.Node;
 import org.taskm.models.Storage;
 import org.taskm.models.Task;
-import org.taskm.models.TaskStatus;
 import org.taskm.models.Topic;
+import org.taskm.models.Task.TaskStatus;
 
 
 

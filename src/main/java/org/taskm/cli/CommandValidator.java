@@ -20,8 +20,8 @@ public class CommandValidator {
         this.commandSpecs = commandSpecs;
     }
     public Result<ArrayList<Token>> validate(List<String> expression ){
-        
-        if (!commandSpecs.hasOptions()){
+         
+        if (!commandSpecs.hasOptions() && !commandSpecs.hasArgument()){
             if (expression.isEmpty())
                 return new Result<ArrayList<Token>>(true, "", null);
             return new Result<ArrayList<Token>>(false, "Invalid argument :"+expression.getFirst() , null );
@@ -41,9 +41,11 @@ public class CommandValidator {
         int i = 0;
         boolean isExpectedTokenArgument = false ;
         OptionSpecs lastOption = null;
+        boolean isExpectedCommandArgument = commandSpecs.hasArgument();
         while (i<expression.size()){
             
             if (expression.get(i).startsWith("--") || expression.get(i).startsWith("-") ){
+
                 if ( isExpectedTokenArgument )
                     return new Result<ArrayList<Token>>(false, "Missing argument for :"+expression.get(i-1), null);
 
@@ -56,7 +58,7 @@ public class CommandValidator {
                 if (optionSpecs.isRequired())
                     requiredOptionsGot.add(optionSpecs.getName());
                 
-                tokens.add(new Token(TokenType.OPTIONS, expression.get(i++)));
+                tokens.add(new Token(Token.TokenType.OPTIONS, expression.get(i++)));
                 if (optionSpecs.hasValue()){
                     isExpectedTokenArgument = true;
                     lastOption = optionSpecs;
@@ -65,19 +67,23 @@ public class CommandValidator {
                 continue;
             }
 
-            if (!isExpectedTokenArgument) 
+            if (!isExpectedTokenArgument && isExpectedCommandArgument) {
+                tokens.add(new Token(Token.TokenType.COMMAND_ARGUMENT , expression.get(i++)));
+                isExpectedCommandArgument = false;
+                continue;
+            }
+            if (!isExpectedTokenArgument && !isExpectedCommandArgument && lastOption == null)
                 return new Result<ArrayList<Token>>(false, "Invalid argument :"+expression.get(i), null);
 
-
             if ( lastOption != null && lastOption.getArguments() == null || lastOption.getArguments().isEmpty()){
-                tokens.add(new Token(TokenType.ARGUMENT, expression.get(i++)));
+                tokens.add(new Token(Token.TokenType.OPTION_ARGUMENT, expression.get(i++)));
                 isExpectedTokenArgument = false;
                 continue;
             }
             
             boolean validArg = lastOption.getArguments().contains(expression.get(i));
             if (validArg){
-                tokens.add(new Token(TokenType.ARGUMENT, expression.get(i++)));
+                tokens.add(new Token(Token.TokenType.OPTION_ARGUMENT, expression.get(i++)));
                 isExpectedTokenArgument = false;
             }
             else 

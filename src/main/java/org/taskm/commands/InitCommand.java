@@ -10,7 +10,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.taskm.cli.Result;
 import org.taskm.cli.Token;
-import org.taskm.cli.TokenType;
 import org.taskm.models.Storage;
 import org.taskm.services.JSONStorage;
 import org.taskm.services.Session;

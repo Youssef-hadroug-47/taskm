@@ -20,13 +20,44 @@ import org.taskm.cli.Parser;
 import org.taskm.cli.ParserResult;
 import org.taskm.cli.Result;
 import org.taskm.commands.*;
-import org.taskm.commandsInfo.CommandSpecs;
-import org.taskm.commandsInfo.CommandsList;
-import org.taskm.commandsInfo.OptionSpecs;
+import org.taskm.commandsInfo.*;
 import org.taskm.services.Session;
 
 
 public class App {
+    public static ArrayList<String> splitExpression(String expression){
+        
+        ArrayList<String> tokens = new ArrayList<>(); 
+        boolean openQuotes = false;
+        String token = new String();
+        for (int i = 0 ;i<expression.length(); i++){
+            char c = expression.charAt(i);
+            if (c == ' ' )
+                if (openQuotes){
+                    token = token + c;
+                    continue;
+                }
+                else  {
+                    if (!token.isEmpty()) tokens.add(token);
+                    token = "";
+                    continue;
+                }
+            if (c == '\"'){
+                openQuotes = !openQuotes;
+                if (!openQuotes){
+                    if (!token.isEmpty()) tokens.add(token);
+                    token = "";
+                }
+                continue;
+            }
+            token = token + c;
+            if (!openQuotes && !token.isEmpty() && i == expression.length() - 1)
+                tokens.add(token);
+        }
+        if (openQuotes)
+            return null;
+        return tokens ;
+    }
          
     public static void main(String[] blabla) {
        
@@ -35,12 +66,14 @@ public class App {
                 "use",
                 Set.of(),
                 "local",
+                false,
                 "Use a local storage",null,new UseCommand() 
                 ),
             new CommandSpecs(
                 "use",
                 Set.of(),
                 "global",
+                false ,
                 "Use a global storage",
                 null, new UseCommand()),
             new CommandSpecs(
@@ -49,18 +82,66 @@ public class App {
                     new OptionSpecs("--name", true, true , new HashSet<>())
                     ), 
                 null,
+                false,
                 "initialize a local storage",null, new InitCommand()
                 ), 
             new CommandSpecs(
                 "exit",
                 Set.of(),
                 null,
+                false,
                 "exit the taskm",null, new ExitCommand()
+                ),
+            new CommandSpecs(
+                "add",
+                Set.of(
+                    new OptionSpecs("--title", true ,true , new HashSet<>())
+                    ),
+                "topic",
+                false,
+                "add a new subtopic to current topic",null , new AddTopicCommand()
+                ),
+            new CommandSpecs(
+                "add",
+                Set.of(
+                    new OptionSpecs("--content", true, true ,new HashSet<>())
+                    ),
+                "task",
+                false,
+                "add a new task to current topic" , null , new AddTaskCommand() 
+                ),
+            new CommandSpecs(
+                "ct",
+                Set.of(),
+                null,
+                true ,
+                "change current topic" , null , new ChangeTopicCommand() 
+                ),
+            new CommandSpecs(
+                "pwt",
+                Set.of(),
+                null,
+                false,
+                "print current working topic" , null , new PWTCommand()
+                ),
+            new CommandSpecs(
+                "ls",
+                Set.of(),
+                null,
+                false,
+                "list all topics and tasks" , null , new LsCommand()
+                ),
+            new CommandSpecs(
+                "clear",
+                Set.of(),
+                null,
+                false,
+                "list all topics and tasks" , null , new ClearCommand()
                 )
             ));  
 
-        try (Terminal terminal = TerminalBuilder.builder().build()){
-            
+        try {
+            Terminal terminal = Session.getSession().getTerminal();            
             
 
             Completer completer = new StringsCompleter(CommandsList.getCommands().
@@ -71,21 +152,24 @@ public class App {
                 toList()
             );
             LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).completer(completer).build();
+            
 
             Session.getSession();
             while(true) {
                 String prompt = new AttributedString(
-                        "taskm >> ",
+                        "taskm "+Session.getSession().getPath() + " >> ",
                         AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()
                         ).toAnsi();
                 String expression = lineReader.readLine(prompt);
 
                 if (expression.isEmpty())
                     continue;
-                ArrayList<String> args = new ArrayList<>(Arrays.asList(
-                            expression.split("[\\s]")
-                            )) ;
-                        
+                ArrayList<String> args = splitExpression(expression);
+                       
+                if (args == null){
+                    System.out.println("invalid command :"+expression);
+                    continue;
+                }
                 Parser parser = new Parser(args);
                 Result<ParserResult> result = parser.parse();
                 if (!result.getSuccess()){ 
@@ -94,12 +178,10 @@ public class App {
                 }
                 Command command = result.getValue().getCommandSpecs().getCommand();
                 Result<Void> res =  command.execute(result.getValue().getTokens());
-                if (res.getMessage() != null || !res.getMessage().isEmpty())System.out.println(res.getMessage());
+                if (res.getMessage() != null && !res.getMessage().isEmpty())
+                    System.out.println(res.getMessage());
                 
             }
-        }
-        catch (IOException ioException){
-            ioException.printStackTrace();
         }
         catch (UserInterruptException interruptedException){
             ExitCommand exitCommand = new ExitCommand();

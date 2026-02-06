@@ -39,9 +39,9 @@ public class Parser {
         if (commandSpecs == null) 
             return new Result<ParserResult>(false, "Invalid command :"+expression.getFirst(), null);
 
-        tokens.add(new Token(TokenType.COMMAND , expression.getFirst())); 
+        tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst())); 
         int optionStartIndex = 1;
-        if (commandSpecs.hasSubCommand()) {tokens.add(new Token(TokenType.SUBCOMMAND , expression.get(1)));optionStartIndex++;}
+        if (commandSpecs.hasSubCommand()) {tokens.add(new Token(Token.TokenType.SUBCOMMAND , expression.get(1)));optionStartIndex++;}
         
         CommandValidator commandValidator = new CommandValidator(commandSpecs);
         Result<ArrayList<Token>> result = commandValidator.validate(expression.subList(optionStartIndex,expression.size()));

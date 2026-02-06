@@ -21,5 +21,18 @@ public class Storage {
     public void setName(String name){this.name = name;}
     public void setTopics(ArrayList<Topic> topics){this.topics = topics;}
     public void setMaxId(int maxId){this.maxId = maxId;}
+    public Topic getTopicByName(String name){
+        List<Topic> tmp = topics.stream().filter(topic -> {
+            return name.equals(topic.getTitle());
+        }).toList();
+        return tmp != null && !tmp.isEmpty() ? tmp.getFirst() : null;
+    }
+    public void addTopic(List<Topic> children){
+        this.topics.addAll(children.stream().filter( child -> {
+            return topics.stream().allMatch( task -> {
+               return !child.getTitle().equals(task.getTitle()); 
+            });
+        }).toList());
+    }
 
 }
