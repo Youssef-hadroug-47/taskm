@@ -24,7 +24,7 @@ public class UseCommand implements Command {
             case "local":
                 Session.getSession().setStorage(Session.getSession().getAvailableStorages().getLast());
         }
-        return new Result<Void>(true, "Successfully selected storage of name "+Session.getSession().getStorage().getName() , null);
+        return new Result<Void>(true, "" , null);
     }
 
 

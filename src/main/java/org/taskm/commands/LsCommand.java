@@ -18,7 +18,7 @@ public class LsCommand implements Command {
         if (Session.getSession().getTopic() == null){
             for (Topic t : Session.getSession().getStorage().getTopics()){
                 System.out.println(new AttributedString(
-                            t.getTitle(),
+                            "  🟄 " + t.getTitle(),
                             AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)).toAnsi()
                         );
             }

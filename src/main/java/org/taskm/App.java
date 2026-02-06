@@ -1,9 +1,7 @@
 package org.taskm;
 
 import java.util.List;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,8 +11,8 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.taskm.cli.Parser;
 import org.taskm.cli.ParserResult;
@@ -22,6 +20,7 @@ import org.taskm.cli.Result;
 import org.taskm.commands.*;
 import org.taskm.commandsInfo.*;
 import org.taskm.services.Session;
+
 
 
 public class App {
@@ -154,32 +153,50 @@ public class App {
             LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).completer(completer).build();
             
 
+            AttributedStringBuilder notifBuilder = new AttributedStringBuilder();
             Session.getSession();
+            AttributedString tmp ;
+            if (Session.getSession().getAvailableStorages().size() == 2){
+                tmp = notifBuilder.style(AttributedStyle.DEFAULT.foreground(17, 117, 12))
+                       .append("✓ Local storage is detected").toAttributedString();
+                System.out.println(tmp.toAnsi());
+            }
+
+ 
             while(true) {
-                String prompt = new AttributedString(
-                        "taskm "+Session.getSession().getPath() + " >> ",
-                        AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()
-                        ).toAnsi();
-                String expression = lineReader.readLine(prompt);
+                AttributedStringBuilder builder = new AttributedStringBuilder();
+                AttributedString prompt = builder
+                        .style(AttributedStyle.DEFAULT.foreground(90, 90, 90).bold())
+                        .append("╭──" )
+                        .style(AttributedStyle.DEFAULT.foreground(209, 124, 4).italic())
+                        .append( "≺" + Session.getSession().getPath() + "≻" )
+                        .style(AttributedStyle.DEFAULT.foreground(226, 223, 209).bold())
+                        .append(Session.getSession().getStorage()== null  ? 
+                                "-≺None≻" :
+                                "-≺" +  Session.getSession().getStorage().getName() + "≻" )
+                        .style(AttributedStyle.DEFAULT.foreground(90, 90, 90).bold())
+                        .append("\n╰─⮞ ")
+                        .toAttributedString();
+                String expression = lineReader.readLine(prompt.toAnsi());
 
                 if (expression.isEmpty())
                     continue;
                 ArrayList<String> args = splitExpression(expression);
                        
                 if (args == null){
-                    System.out.println("invalid command :"+expression);
+                    Result<Void> error = new Result<Void>(false,"invalid command :"+expression , null);
+                    error.printMessage();
                     continue;
                 }
                 Parser parser = new Parser(args);
                 Result<ParserResult> result = parser.parse();
                 if (!result.getSuccess()){ 
-                    result.showFailure();
+                    result.printMessage();
                     continue;
                 }
                 Command command = result.getValue().getCommandSpecs().getCommand();
                 Result<Void> res =  command.execute(result.getValue().getTokens());
-                if (res.getMessage() != null && !res.getMessage().isEmpty())
-                    System.out.println(res.getMessage());
+                res.printMessage();
                 
             }
         }

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 mvn verify >/dev/null 2>/dev/null
-mkdir -p ~/.taskm
-rm -rf ~/.taskm/*
+if [[ -d .taskm ]];then
+    mkdir -p ~/.taskm
+fi
+rm -rf ~/.taskm/bin ~/.taskm/lib
 cp -r target/jpackage/taskm/* ~/.taskm

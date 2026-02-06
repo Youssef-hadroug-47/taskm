@@ -39,7 +39,8 @@ public class Session {
             this.terminal = TerminalBuilder.builder().build();
         }
         catch(IOException ioException){
-            System.out.println("Error while trying to establish terminal");
+            Result<Void> error = new Result<Void>(false, "Error while trying to establish terminal", null );
+            error.printMessage();
         }
         availableStorages = new ArrayList<>();
 
@@ -60,7 +61,8 @@ public class Session {
             }
         }
         catch (IOException e){
-            System.out.println("Global storage directory error !");
+            Result<Void> error = new Result<Void>(false, "Global storage directory error !", null);
+            error.printMessage();
             return;
         }
         
@@ -78,7 +80,7 @@ public class Session {
         this.currentFile = storage;
         Result<Storage> res = JSONStorage.load(storage);
         if(res.getSuccess()) this.currentStorage = res.getValue();
-        else System.out.println(res.getMessage());
+        else res.printMessage();
     }
     public void setAvailableStorages(List<File> availableStorages){this.availableStorages = availableStorages;}
 
