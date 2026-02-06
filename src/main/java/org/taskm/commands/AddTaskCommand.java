@@ -16,15 +16,17 @@ public class AddTaskCommand implements Command {
     public Result<Void> execute(List<Token> tokens){
         if (Session.getSession().getStorage() == null)
             return new Result<Void>(false, "Use a storage ", null);
+        if (Session.getSession().getTopic() == null)
+            return new Result<Void>(false, "Can't create a task in root topic", null);
 
-        StringBuilder description = new StringBuilder("");
+        String description = "" ;
         for (int i = 3 ; i<tokens.size() ; i++)
-            description.append(tokens.get(i).getVal());
-        Topic currentTopic = Session.getSession().getTopic();
+            description = description + tokens.get(i).getVal();
 
+        Topic currentTopic = Session.getSession().getTopic();
         LocalDate dateOfCreation = LocalDate.now();
         TaskStatus status = TaskStatus.todo;
-        Task newTask = new Task(dateOfCreation, dateOfCreation, currentTopic, status , description.toString());
+        Task newTask = new Task(dateOfCreation, dateOfCreation, currentTopic, status , description);
         currentTopic.addTask(List.of(newTask));
 
         return new Result<Void>(true, "Task created successfully with id "+newTask.getId(), null);

@@ -21,13 +21,8 @@ public class CommandValidator {
     }
     public Result<ArrayList<Token>> validate(List<String> expression ){
          
-        if (!commandSpecs.hasOptions() && !commandSpecs.hasArgument()){
-            if (expression.isEmpty())
-                return new Result<ArrayList<Token>>(true, "", null);
-            return new Result<ArrayList<Token>>(false, "Invalid argument :"+expression.getFirst() , null );
-        }
 
-        if (expression.isEmpty())
+        if (expression.isEmpty() && ( commandSpecs.hasRequiredOptions() || commandSpecs.hasArgument() ))
             return new Result<ArrayList<Token>>(false, "No arguments provided please consult help page", null);
 
         ArrayList<Token> tokens = new ArrayList<>();

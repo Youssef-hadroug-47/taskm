@@ -9,7 +9,7 @@ import org.taskm.cli.Token;
 import org.taskm.models.Topic;
 import org.taskm.services.Session;
 
-public class LsCommand implements Command {
+public class LsTopicCommand implements Command {
     
     @Override
     public Result<Void> execute(List<Token> tokens){

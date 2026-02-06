@@ -125,10 +125,19 @@ public class App {
                 ),
             new CommandSpecs(
                 "ls",
-                Set.of(),
-                null,
+                Set.of(
+                        new OptionSpecs("-a", false, false, Set.of())
+                    ),
+                "task",
                 false,
-                "list all topics and tasks" , null , new LsCommand()
+                "list all tasks of current topic" , null , new LsTaskCommand()
+                ),
+            new CommandSpecs(
+                "ls",
+                Set.of(),
+                "topic",
+                false,
+                "list all topics of current topic" , null , new LsTopicCommand()
                 ),
             new CommandSpecs(
                 "clear",

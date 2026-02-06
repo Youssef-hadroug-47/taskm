@@ -1,6 +1,7 @@
 package org.taskm.commands;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.taskm.cli.Result;
@@ -22,7 +23,7 @@ public class AddTopicCommand implements Command {
         Topic currentTopic = Session.getSession().getTopic();
         LocalDate dateOfCreation = LocalDate.now();
         Topic newTopic = new Topic(currentTopic, dateOfCreation , dateOfCreation ,
-                List.of(), List.of(), List.of(), title.toString() , 0); 
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), title.toString() , 0); 
         if (currentTopic != null )
             currentTopic.addTopic(List.of(newTopic));
         else 

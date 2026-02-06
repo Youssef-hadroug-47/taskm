@@ -39,5 +39,6 @@ public class CommandSpecs {
     public Set<OptionSpecs> getRequiredOptions(){return requiredOptions;}
     public boolean hasSubCommand(){return subCommand != null && !subCommand.isEmpty() ;}
     public boolean hasOptions(){return options != null && options.size() != 0 ;}
+    public boolean hasRequiredOptions(){return options != null && options.stream().anyMatch( option -> option.isRequired() );}
     public boolean hasArgument(){return hasArgument;}
 }

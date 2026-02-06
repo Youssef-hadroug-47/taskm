@@ -84,11 +84,7 @@ public class Topic extends Node implements TopicOperator , TopicIterator{
     }
     @Override
     public void addTask(List<Task> children){
-        this.childrenTasks.addAll(children.stream().filter( child -> {
-            return childrenTasks.stream().allMatch( task -> {
-               return child.getDescription().equals(task.getDescription()); 
-            });
-        }).toList());
+        this.childrenTasks.addAll(children);
         this.nbOfTasks += children.size();
         this.children.addAll(children);
     }
@@ -122,5 +118,10 @@ public class Topic extends Node implements TopicOperator , TopicIterator{
         if (!hasPrev())
             return null;
         return parent;
+    }
+
+    public Task getTaskById(int id){
+        List<Task> tmp = childrenTasks.stream().filter(task -> task.getId() == id).toList();
+        return tmp.isEmpty() ? null : tmp.getFirst();
     }
 }

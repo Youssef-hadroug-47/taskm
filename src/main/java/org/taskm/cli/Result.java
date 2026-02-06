@@ -25,6 +25,8 @@ public class Result<T> {
     public void setMessage(String message ){this.message = message;}
     public void setValue(T val){this.val = val;}
     public void printMessage(){
+        if (message == null || message.isEmpty())
+            return ;
         AttributedStringBuilder builder = new AttributedStringBuilder(); 
         System.out.println(
                 builder.append("   " + message)
