@@ -95,7 +95,7 @@ public class App {
                 ),
             new CommandSpecs(
                 "add",
-                Set.of(),
+                Set.of("add"),
                 Set.of(),
                 "topic",
                 true,
@@ -171,6 +171,16 @@ public class App {
                 "task",
                 true,
                 "Delete task in current working topic" , null , new RmTaskCommand()
+                ),
+            new CommandSpecs(
+                "mark",
+                Set.of(),
+                Set.of(
+                    new OptionSpecs("-s", true , true , Set.of("todo","inprogress","done"))
+                    ),
+                null,
+                true,
+                "Mark task status" , null , new MarkTaskCommand()
                 )
             ));  
 

@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.taskm.cli.Result;
 
 
-public class Storage implements TopicOperator{
+public class Storage {
     
     private List<Topic> topics;
     private int maxId;
@@ -36,7 +35,6 @@ public class Storage implements TopicOperator{
     public void setTopics(ArrayList<Topic> topics){this.topics = topics;}
     public void setMaxId(int maxId){this.maxId = maxId;}
     
-    @Override
     public Topic getTopic(String name){
         List<Topic> tmp = topics.stream().filter(topic -> {
             return name.equals(topic.getTitle());
@@ -44,7 +42,6 @@ public class Storage implements TopicOperator{
         return tmp != null && !tmp.isEmpty() ? tmp.getFirst() : null;
     }
 
-    @Override
     public void addTopic(List<Topic> children){
         this.topics.addAll(children.stream().filter( child -> {
             return topics.stream().allMatch( task -> {
@@ -52,7 +49,6 @@ public class Storage implements TopicOperator{
             });
         }).toList());
     }
-    @Override 
     public void deleteTopic(List<String> names){
         for (String name : names){
             Topic tmp = getTopic(name);
@@ -65,7 +61,6 @@ public class Storage implements TopicOperator{
             }
         }
     }
-    @Override
     public void updateTopic(String name){}
     
     //@Override

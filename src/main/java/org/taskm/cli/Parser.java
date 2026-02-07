@@ -26,6 +26,7 @@ public class Parser {
         CommandSpecs commandSpecs = null;
         
         int optionStartIndex = 1;
+        CommandSpecs alias = null;
         for (CommandSpecs c : commands){
             if ( expression.getFirst().equals(c.getName()) ){
                 if (c.hasSubCommand() && expression.size() > 1 && expression.get(1).equals(c.getSubCommand()) ){
@@ -42,14 +43,16 @@ public class Parser {
                 }
             }
             if (c.hasAliases() && c.getAliases().contains(expression.getFirst()) ){
-                tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst()));
-                commandSpecs = c;
-                break;
+                alias = c;
             }
         }
-
-        if (commandSpecs == null) 
-            return new Result<ParserResult>(false, "Invalid command :"+expression.getFirst(), null);
+        if (commandSpecs == null ) 
+            if(alias != null){
+                tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst())); 
+                commandSpecs = alias;
+            }
+            else 
+                return new Result<ParserResult>(false, "Invalid command :"+expression.getFirst(), null);
 
         CommandValidator commandValidator = new CommandValidator(commandSpecs);
         Result<ArrayList<Token>> result = commandValidator.validate(expression.subList(optionStartIndex,expression.size()));

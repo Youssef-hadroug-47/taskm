@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import org.taskm.cli.Result;
 import org.taskm.services.Session;
 
-public class Topic extends Node implements TopicOperator , TopicIterator , TaskOperator{
+public class Topic extends Node implements TopicOperator , TopicIterator {
     private int maxId;
     private String title;
     private int nbOfTasks;
@@ -99,8 +99,6 @@ public class Topic extends Node implements TopicOperator , TopicIterator , TaskO
     @Override
     public void updateTopic(String title){}
     @Override
-    public void updateTask(String description){}
-    @Override
     public void deleteTopic(List<String> topics){
         for (String t : topics){
             Topic topic = getTopic(t);
@@ -129,8 +127,6 @@ public class Topic extends Node implements TopicOperator , TopicIterator , TaskO
         }
     }
 
-    @Override
-    public void markTask(Task.TaskStatus status){}
 
     @Override
     public boolean hasNext(){

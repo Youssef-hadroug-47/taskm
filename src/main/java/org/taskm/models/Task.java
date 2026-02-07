@@ -2,7 +2,7 @@ package org.taskm.models;
 
 import java.time.LocalDate;
 
-public class Task extends Node {
+public class Task extends Node implements TaskOperator{
 
      public enum TaskStatus {
         done,
@@ -28,7 +28,8 @@ public class Task extends Node {
     }   
     public TaskStatus getStatus(){return status;}
     public String getDescription(){return description;}
-
-    public void setStatus(TaskStatus status){this.status = status;}
-    public void setDescription(String description){this.description = description;}
+    
+    @Override
+    public void markTask(Task.TaskStatus status){this.status = status;}
+    public void updateTask(String description){this.description = description;}
 }
