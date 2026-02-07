@@ -64,6 +64,7 @@ public class App {
             new CommandSpecs(
                 "use",
                 Set.of(),
+                Set.of(),
                 "local",
                 false,
                 "Use a local storage",null,new UseCommand() 
@@ -71,21 +72,22 @@ public class App {
             new CommandSpecs(
                 "use",
                 Set.of(),
+                Set.of(),
                 "global",
                 false ,
                 "Use a global storage",
                 null, new UseCommand()),
             new CommandSpecs(
                 "init", 
-                Set.of(
-                    new OptionSpecs("--name", true, true , new HashSet<>())
-                    ), 
+                Set.of(),
+                Set.of(), 
                 null,
-                false,
+                true,
                 "initialize a local storage",null, new InitCommand()
                 ), 
             new CommandSpecs(
                 "exit",
+                Set.of(),
                 Set.of(),
                 null,
                 false,
@@ -93,24 +95,23 @@ public class App {
                 ),
             new CommandSpecs(
                 "add",
-                Set.of(
-                    new OptionSpecs("--title", true ,true , new HashSet<>())
-                    ),
+                Set.of(),
+                Set.of(),
                 "topic",
-                false,
+                true,
                 "add a new subtopic to current topic",null , new AddTopicCommand()
                 ),
             new CommandSpecs(
                 "add",
-                Set.of(
-                    new OptionSpecs("--content", true, true ,new HashSet<>())
-                    ),
+                Set.of(),
+                Set.of(),
                 "task",
-                false,
+                true,
                 "add a new task to current topic" , null , new AddTaskCommand() 
                 ),
             new CommandSpecs(
                 "ct",
+                Set.of(),
                 Set.of(),
                 null,
                 true ,
@@ -119,12 +120,14 @@ public class App {
             new CommandSpecs(
                 "pwt",
                 Set.of(),
+                Set.of(),
                 null,
                 false,
                 "print current working topic" , null , new PWTCommand()
                 ),
             new CommandSpecs(
                 "ls",
+                Set.of(),
                 Set.of(
                         new OptionSpecs("-a", false, false, Set.of())
                     ),
@@ -134,6 +137,7 @@ public class App {
                 ),
             new CommandSpecs(
                 "ls",
+                Set.of("ls"),
                 Set.of(),
                 "topic",
                 false,
@@ -142,14 +146,36 @@ public class App {
             new CommandSpecs(
                 "clear",
                 Set.of(),
+                Set.of(),
                 null,
                 false,
-                "list all topics and tasks" , null , new ClearCommand()
+                "Clear screen" , null , new ClearCommand()
+                ),
+            new CommandSpecs(
+                "rm",
+                Set.of("rm"),
+                Set.of(
+                    new OptionSpecs("-r", false, false, Set.of()),
+                    new OptionSpecs("-a" , false, false, Set.of())
+                    ),
+                "topic",
+                true ,
+                "Delete subTopic in current topic" , null , new RmTopicCommand()
+                ),
+            new CommandSpecs(
+                "rm",
+                Set.of(),
+                Set.of(
+                    new OptionSpecs("-a" , false, false, Set.of())
+                    ),
+                "task",
+                true,
+                "Delete task in current working topic" , null , new RmTaskCommand()
                 )
             ));  
 
         try {
-            Terminal terminal = Session.getSession().getTerminal();            
+            Terminal terminal = Session.getSession().getTerminal();
             
 
             Completer completer = new StringsCompleter(CommandsList.getCommands().

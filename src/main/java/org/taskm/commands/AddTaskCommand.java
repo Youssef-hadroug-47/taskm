@@ -20,8 +20,9 @@ public class AddTaskCommand implements Command {
             return new Result<Void>(false, "Can't create a task in root topic", null);
 
         String description = "" ;
-        for (int i = 3 ; i<tokens.size() ; i++)
-            description = description + tokens.get(i).getVal();
+        for (int i = 2 ; i<tokens.size() ; i++)
+            if (tokens.get(i).getType().equals(Token.TokenType.COMMAND_ARGUMENT))
+                description = description + tokens.get(i).getVal();
 
         Topic currentTopic = Session.getSession().getTopic();
         LocalDate dateOfCreation = LocalDate.now();

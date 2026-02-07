@@ -1,10 +1,18 @@
 package org.taskm.models;
 
 import java.time.LocalDate;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
-public class Topic extends Node implements TopicOperator , TopicIterator{
+import org.taskm.cli.Result;
+import org.taskm.services.Session;
+
+public class Topic extends Node implements TopicOperator , TopicIterator , TaskOperator{
     private int maxId;
     private String title;
     private int nbOfTasks;
@@ -89,12 +97,40 @@ public class Topic extends Node implements TopicOperator , TopicIterator{
         this.children.addAll(children);
     }
     @Override
-    public void readTopic(){}
-    @Override
     public void updateTopic(String title){}
     @Override
-    public void deleteTopic(){}
+    public void updateTask(String description){}
+    @Override
+    public void deleteTopic(List<String> topics){
+        for (String t : topics){
+            Topic topic = getTopic(t);
+            if (topic == null){
+                Result<Void> result = new Result<Void>(false, "Unfound topic name :" + t, null);
+                result.printMessage();
+            }
+            else {
+                childrenTopics.remove(topic);         
+                nbOfTopics--;
+            }
+        }
+    }
+    @Override
+    public void deleteTask(List<Integer> tasks){
+        for (Integer t : tasks){
+            Task task = getTask(t);
+            if (task == null){
+                Result<Void> result = new Result<Void>(false, "Unfound task id :" + t, null);
+                result.printMessage();
+            }
+            else {
+                childrenTasks.remove(task);
+                nbOfTasks--;
+            }
+        }
+    }
 
+    @Override
+    public void markTask(Task.TaskStatus status){}
 
     @Override
     public boolean hasNext(){
@@ -119,9 +155,65 @@ public class Topic extends Node implements TopicOperator , TopicIterator{
             return null;
         return parent;
     }
+    @Override
+    public void BFS(Consumer<Topic> consumer){
+        Topic head = this;
 
-    public Task getTaskById(int id){
+        Deque<Topic> queue = new ArrayDeque<>();
+        queue.add(head);
+        Set<Topic> visited = new HashSet<>();
+
+        while (!queue.isEmpty()){
+            Topic current = queue.getFirst();
+            queue.pollFirst();
+            if (visited.contains(current))
+                continue;
+            visited.add(current);
+            queue.addAll(current.getChildrenTopics());
+            if (current.parent == null){
+                queue.addAll(Session.getSession().getStorage().getTopics().stream().filter( a -> a == this).toList());
+            }
+            else 
+                queue.add(parent);
+
+            consumer.accept(current);
+        }
+
+    }
+    @Override
+    public void DFS(Consumer<Topic> consumer){
+        Topic head = this;
+
+        Deque<Topic> stack = new ArrayDeque<>();
+        stack.add(head);
+        Set<Topic> visited = new HashSet<>();
+
+        while (!stack.isEmpty()){
+            Topic current = stack.getLast();
+            stack.pollLast();
+            if (visited.contains(current))
+                continue;
+            visited.add(current);
+            stack.addAll(current.getChildrenTopics());
+            if (current.parent == null){
+                stack.addAll(Session.getSession().getStorage().getTopics().stream().filter( a -> a == this).toList());
+            }
+            else 
+                stack.add(parent);
+
+            consumer.accept(current);
+        }
+
+    }
+
+    @Override
+    public Task getTask(int id){
         List<Task> tmp = childrenTasks.stream().filter(task -> task.getId() == id).toList();
+        return tmp.isEmpty() ? null : tmp.getFirst();
+    }
+    @Override
+    public Topic getTopic(String name){
+        List<Topic> tmp = childrenTopics.stream().filter(topic -> topic.getTitle().equals(name)).toList();
         return tmp.isEmpty() ? null : tmp.getFirst();
     }
 }

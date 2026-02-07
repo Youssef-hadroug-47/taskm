@@ -19,12 +19,16 @@ public class InitCommand implements Command {
 
     @Override
     public Result<Void> execute(List<Token> tokens){
-
-        String name = tokens.getLast().getVal(); 
+        String name ;
+        if (tokens.getLast().getType().equals(Token.TokenType.COMMAND_ARGUMENT))
+            name = tokens.getLast().getVal(); 
+        else 
+            return new Result<Void>(false, "init :Invalid arugment :" + tokens.getLast().getVal(), null);
         
             
         if (Session.getSession().getAvailableStorages().size() == 2)
             return new Result<Void>(false, "Local storage already exists:", null);
+
         Path current_dir = Path.of(System.getProperty("user.dir")+"/.taskm");
         try {
             Files.createDirectories(current_dir);

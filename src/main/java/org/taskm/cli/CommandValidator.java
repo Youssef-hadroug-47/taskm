@@ -33,59 +33,71 @@ public class CommandValidator {
                     OptionSpecs::getName, 
                     Function.identity())
                 );
+
         int i = 0;
-        boolean isExpectedTokenArgument = false ;
+        boolean isExpectedOptionArgument = false ;
         OptionSpecs lastOption = null;
         boolean isExpectedCommandArgument = commandSpecs.hasArgument();
+        boolean hasArgument = commandSpecs.hasArgument();
         while (i<expression.size()){
             
             if (expression.get(i).startsWith("--") || expression.get(i).startsWith("-") ){
 
-                if ( isExpectedTokenArgument )
+                if ( isExpectedOptionArgument )
                     return new Result<ArrayList<Token>>(false, "Missing argument for :"+expression.get(i-1), null);
-
+               
                 OptionSpecs optionSpecs = null; 
 
                 optionSpecs = optionsByName.get(expression.get(i));
 
                 if (optionSpecs == null)
                     return new Result<ArrayList<Token>>(false , "Invalid option :"+expression.get(i), null);
+
+                if ( isExpectedCommandArgument && optionSpecs.hasValue())
+                    return new Result<ArrayList<Token>>(false, "Missing argument for :" + commandSpecs.getSubCommand(), null);
+ 
                 if (optionSpecs.isRequired())
                     requiredOptionsGot.add(optionSpecs.getName());
                 
                 tokens.add(new Token(Token.TokenType.OPTIONS, expression.get(i++)));
                 if (optionSpecs.hasValue()){
-                    isExpectedTokenArgument = true;
+                    isExpectedOptionArgument = true;
                     lastOption = optionSpecs;
                 }
-                else isExpectedTokenArgument = false;
+                else isExpectedOptionArgument = false;
+                hasArgument = false;
                 continue;
             }
 
-            if (!isExpectedTokenArgument && isExpectedCommandArgument) {
+            if (!isExpectedOptionArgument && isExpectedCommandArgument) {
                 tokens.add(new Token(Token.TokenType.COMMAND_ARGUMENT , expression.get(i++)));
                 isExpectedCommandArgument = false;
                 continue;
             }
-            if (!isExpectedTokenArgument && !isExpectedCommandArgument && lastOption == null)
+            if (!isExpectedOptionArgument && !isExpectedCommandArgument && lastOption == null && !hasArgument)
                 return new Result<ArrayList<Token>>(false, "Invalid argument :"+expression.get(i), null);
+            
+            if (hasArgument){
+                tokens.add(new Token(Token.TokenType.COMMAND_ARGUMENT , expression.get(i++)));
+                continue;
+            }
 
-            if ( lastOption != null && lastOption.getArguments() == null || lastOption.getArguments().isEmpty()){
+            if ( lastOption != null && ( lastOption.getArguments() == null || lastOption.getArguments().isEmpty() )){
                 tokens.add(new Token(Token.TokenType.OPTION_ARGUMENT, expression.get(i++)));
-                isExpectedTokenArgument = false;
+                isExpectedOptionArgument = false;
                 continue;
             }
             
             boolean validArg = lastOption.getArguments().contains(expression.get(i));
             if (validArg){
                 tokens.add(new Token(Token.TokenType.OPTION_ARGUMENT, expression.get(i++)));
-                isExpectedTokenArgument = false;
+                isExpectedOptionArgument = false;
             }
             else 
                 return new Result<ArrayList<Token>>(false , "Invalid argument :"+expression.get(i), null);
 
         }
-        if (isExpectedTokenArgument)
+        if (isExpectedOptionArgument)
             return new Result<ArrayList<Token>>(false, "Missing argument for :"+lastOption.getName(), null);
         if (nb_requiredOptions != requiredOptionsGot.size() )
             return new Result<ArrayList<Token>>(false, "missing options :\n"+commandSpecs.getFormat(), null);

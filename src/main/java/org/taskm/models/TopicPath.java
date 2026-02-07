@@ -52,7 +52,7 @@ public class TopicPath {
             else if (tmp.equals(".")){}
             else {
                 if (topicStack == null || topicStack.isEmpty())
-                    tmp_topic = Session.getSession().getStorage().getTopicByName(tmp);
+                    tmp_topic = Session.getSession().getStorage().getTopic(tmp);
                 else 
                     tmp_topic = topicStack.getLast().next(tmp);
 

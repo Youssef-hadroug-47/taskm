@@ -29,8 +29,8 @@ public class Result<T> {
             return ;
         AttributedStringBuilder builder = new AttributedStringBuilder(); 
         System.out.println(
-                builder.append("   " + message)
-                .style( success ? successStyle : failureStyle)
+                builder.style( success ? successStyle : failureStyle)
+                .append("   " + message)
                 .toAnsi()
                 );
     }

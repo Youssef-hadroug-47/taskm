@@ -27,7 +27,7 @@ public class LsTopicCommand implements Command {
         else {
             for (Topic t : Session.getSession().getTopic().getChildrenTopics()){
                 System.out.println(new AttributedString(
-                            t.getTitle(),
+                            "  🟄 " + t.getTitle(),
                             AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)).toAnsi()
                         );
             }

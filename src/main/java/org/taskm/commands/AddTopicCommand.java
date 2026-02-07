@@ -17,8 +17,9 @@ public class AddTopicCommand implements Command {
             return new Result<Void>(false, "Use a storage ", null);
 
         StringBuilder title = new StringBuilder("");
-        for (int i = 3 ; i< tokens.size() ;i++)
-            title.append(tokens.get(i).getVal());
+        for (int i = 2 ; i< tokens.size() ;i++)
+            if (tokens.get(i).getType().equals(Token.TokenType.COMMAND_ARGUMENT)) 
+                title.append(tokens.get(i).getVal());
 
         Topic currentTopic = Session.getSession().getTopic();
         LocalDate dateOfCreation = LocalDate.now();

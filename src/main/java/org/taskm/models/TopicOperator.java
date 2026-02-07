@@ -4,8 +4,7 @@ import java.util.List;
 
 public interface TopicOperator {
     void addTopic(List<Topic> children);
-    void addTask (List<Task> children);
-    void readTopic();
+    Topic getTopic(String name);
     void updateTopic(String Title);
-    void deleteTopic();
+    void deleteTopic(List<String> topics);
 }

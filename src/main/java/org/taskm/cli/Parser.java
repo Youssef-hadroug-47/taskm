@@ -25,24 +25,32 @@ public class Parser {
         Set<CommandSpecs> commands = CommandsList.getCommands()  ;
         CommandSpecs commandSpecs = null;
         
-        for (CommandSpecs c : commands)
+        int optionStartIndex = 1;
+        for (CommandSpecs c : commands){
             if ( expression.getFirst().equals(c.getName()) ){
-                if (c.hasSubCommand() && expression.size() > 1 && expression.get(1).equals(c.getSubCommand())){
+                if (c.hasSubCommand() && expression.size() > 1 && expression.get(1).equals(c.getSubCommand()) ){
                     commandSpecs = c;    
+                    tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst()));
+                    tokens.add(new Token(Token.TokenType.SUBCOMMAND , expression.get(1)));
+                    optionStartIndex++;
                     break;
                 }
                 if (!c.hasSubCommand()){
                     commandSpecs = c;
-                    break; 
+                    tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst())); 
+                    break;
                 }
             }
+            if (c.hasAliases() && c.getAliases().contains(expression.getFirst()) ){
+                tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst()));
+                commandSpecs = c;
+                break;
+            }
+        }
+
         if (commandSpecs == null) 
             return new Result<ParserResult>(false, "Invalid command :"+expression.getFirst(), null);
 
-        tokens.add(new Token(Token.TokenType.COMMAND , expression.getFirst())); 
-        int optionStartIndex = 1;
-        if (commandSpecs.hasSubCommand()) {tokens.add(new Token(Token.TokenType.SUBCOMMAND , expression.get(1)));optionStartIndex++;}
-        
         CommandValidator commandValidator = new CommandValidator(commandSpecs);
         Result<ArrayList<Token>> result = commandValidator.validate(expression.subList(optionStartIndex,expression.size()));
         

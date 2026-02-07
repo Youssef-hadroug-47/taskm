@@ -93,7 +93,7 @@ public class ChangeTopicCommand implements Command {
             else if (tmp.equals(".")){}
             else {
                 if (topicStack == null || topicStack.isEmpty())
-                    tmp_topic = storage.getTopicByName(tmp);
+                    tmp_topic = storage.getTopic(tmp);
                 else 
                     tmp_topic = topicStack.getLast().next(tmp);
 
