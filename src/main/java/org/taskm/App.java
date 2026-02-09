@@ -181,8 +181,35 @@ public class App {
                 null,
                 true,
                 "Mark task status" , null , new MarkTaskCommand()
+                ),
+            new CommandSpecs(
+                "find",
+                Set.of(),
+                Set.of(),
+                "topic",
+                true,
+                "Find topics that contain a given text "  , null , new FindTopicCommand()
+                ),
+            new CommandSpecs(
+                "find",
+                Set.of(),
+                Set.of(
+                    new OptionSpecs ("-r" , false , false , Set.of())
+                    ),
+                "Task",
+                true,
+                "Find tasks that contain a given text" , null , new FindTaskCommand()
+                ),
+            new CommandSpecs(
+                "tree",
+                Set.of(),
+                Set.of(),
+                null,
+                false,
+                "List topics tree" , null , new TreeCommand()
                 )
             ));  
+            
 
         try {
             Terminal terminal = Session.getSession().getTerminal();

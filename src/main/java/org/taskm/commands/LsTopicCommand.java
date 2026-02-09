@@ -2,8 +2,6 @@ package org.taskm.commands;
 
 import java.util.List;
 
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
 import org.taskm.cli.Result;
 import org.taskm.cli.Token;
 import org.taskm.models.Topic;
@@ -17,19 +15,13 @@ public class LsTopicCommand implements Command {
             return new Result<Void>(false, "Use a storage !", null);
         if (Session.getSession().getTopic() == null){
             for (Topic t : Session.getSession().getStorage().getTopics()){
-                System.out.println(new AttributedString(
-                            "  🟄 " + t.getTitle(),
-                            AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)).toAnsi()
-                        );
+                t.print();
             }
 
         }
         else {
             for (Topic t : Session.getSession().getTopic().getChildrenTopics()){
-                System.out.println(new AttributedString(
-                            "  🟄 " + t.getTitle(),
-                            AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)).toAnsi()
-                        );
+                t.print(); 
             }
     
         }

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
 import org.taskm.cli.Result;
 import org.taskm.services.Session;
 
@@ -211,5 +213,11 @@ public class Topic extends Node implements TopicOperator , TopicIterator {
     public Topic getTopic(String name){
         List<Topic> tmp = childrenTopics.stream().filter(topic -> topic.getTitle().equals(name)).toList();
         return tmp.isEmpty() ? null : tmp.getFirst();
+    }
+    public void print (){
+        System.out.println(new AttributedString(
+        "  🟄 " + this.getTitle(),
+        AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()).toAnsi()
+                    );
     }
 }
